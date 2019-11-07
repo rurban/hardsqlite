@@ -1435,7 +1435,7 @@ struct Schema {
 ** The number of different kinds of things that can be limited
 ** using the sqlite3_limit() interface.
 */
-#define SQLITE_N_LIMIT (SQLITE_LIMIT_WORKER_THREADS+1)
+#define SQLITE_N_LIMIT (SQLITE_LIMIT_HEAP_K+1)
 
 /*
 ** Lookaside malloc is a set of fixed-size buffers that can be used
@@ -1641,6 +1641,7 @@ struct sqlite3 {
   int nVdbeExec;                /* Number of nested calls to VdbeExec() */
   int nVDestroy;                /* Number of active OP_VDestroy operations */
   int nExtension;               /* Number of loaded extensions */
+  i64 nMemUsed;                 /* Memory used by this database connection */
   void **aExtension;            /* Array of shared library handles */
   union {
     void (*xLegacy)(void*,const char*);   /* mTrace==SQLITE_TRACE_LEGACY */
