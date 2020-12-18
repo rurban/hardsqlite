@@ -1,8 +1,17 @@
-<h1 align="center">SQLite Source Repository</h1>
+<h1 align="center">Hardened SQLite Source Repository</h1>
 
-This repository contains the complete source code for the
-[SQLite database engine](https://sqlite.org/).  Some test scripts
-are also included.  However, many other test scripts
+This repository contains the source code and patches for the
+**Hardened SQLite database engine** for [SQLite](https://sqlite.org/).
+
+SQLite should be hardly used asis, see e.g.
+https://research.checkpoint.com/2019/select-code_execution-from-using-sqlite/
+or https://github.com/unitedstates/data-seal/issues/21
+Even simple remote queries can be made destructive, due to the extremely hackish design.
+Some extensions (FTS3-5) are also insecure by default, and not needed at all.
+For those who cannot use [Dqlite](https://dqlite.io/) ...
+(_work in progress_)
+
+Some test scripts are included.  However, many other test scripts
 and most of the documentation are managed separately.
 
 ## Version Control
@@ -26,6 +35,14 @@ verify its integrity, there are hints on how to do that in the
 [Verifying Code Authenticity](#vauth) section below.
 
 ## Obtaining The Code
+
+```
+git clone https://github.com/rurban/hardsqlite
+mkdir hardsqlite
+cd hardsqlite
+```
+
+## Obtaining The Original SQLite Code
 
 If you do not want to use Fossil, you can download tarballs or ZIP
 archives or [SQLite archives](https://sqlite.org/cli.html#sqlar) as follows:
