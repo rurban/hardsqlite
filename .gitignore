@@ -1,0 +1,7 @@
+/.build*
+.fslckout
+/autom4te.cache
+/config.h.in~
+/manifest
+/manifest.uuid
+/sqlite.fossil
