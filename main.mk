@@ -45,7 +45,7 @@
 # This is how we compile
 #
 TCCX =  $(TCC) $(OPTS) -I. -I$(TOP)/src -I$(TOP)
-TCCX += -I$(TOP)/ext/rtree -I$(TOP)/ext/icu -I$(TOP)/ext/fts3
+TCCX += -I$(TOP)/ext/rtree -I$(TOP)/ext/icu
 TCCX += -I$(TOP)/ext/async -I$(TOP)/ext/userauth
 TCCX += -I$(TOP)/ext/session
 TCCX += -I$(TOP)/ext/fts5
@@ -59,12 +59,8 @@ LIBOBJ+= vdbe.o parse.o \
          callback.o complete.o ctime.o \
          date.o dbpage.o dbstat.o delete.o expr.o \
 	 fault.o fkey.o \
-         fts3.o fts3_aux.o fts3_expr.o fts3_hash.o fts3_icu.o fts3_porter.o \
-         fts3_snippet.o fts3_tokenizer.o fts3_tokenizer1.o \
-         fts3_tokenize_vtab.o \
-	 fts3_unicode.o fts3_unicode2.o \
-         fts3_write.o fts5.o func.o global.o hash.o \
-         icu.o insert.o json.o legacy.o loadext.o \
+	 fts5.o func.o global.o hash.o \
+         icu.o insert.o json1.o legacy.o loadext.o \
          main.o malloc.o mem0.o mem1.o mem2.o mem3.o mem5.o \
          memdb.o memjournal.o \
          mutex.o mutex_noop.o mutex_unix.o mutex_w32.o \
@@ -193,24 +189,6 @@ SRC = \
 # Source code for extensions
 #
 SRC += \
-  $(TOP)/ext/fts3/fts3.c \
-  $(TOP)/ext/fts3/fts3.h \
-  $(TOP)/ext/fts3/fts3Int.h \
-  $(TOP)/ext/fts3/fts3_aux.c \
-  $(TOP)/ext/fts3/fts3_expr.c \
-  $(TOP)/ext/fts3/fts3_hash.c \
-  $(TOP)/ext/fts3/fts3_hash.h \
-  $(TOP)/ext/fts3/fts3_icu.c \
-  $(TOP)/ext/fts3/fts3_porter.c \
-  $(TOP)/ext/fts3/fts3_snippet.c \
-  $(TOP)/ext/fts3/fts3_tokenizer.h \
-  $(TOP)/ext/fts3/fts3_tokenizer.c \
-  $(TOP)/ext/fts3/fts3_tokenizer1.c \
-  $(TOP)/ext/fts3/fts3_tokenize_vtab.c \
-  $(TOP)/ext/fts3/fts3_unicode.c \
-  $(TOP)/ext/fts3/fts3_unicode2.c \
-  $(TOP)/ext/fts3/fts3_write.c
-SRC += \
   $(TOP)/ext/icu/sqliteicu.h \
   $(TOP)/ext/icu/icu.c
 SRC += \
@@ -289,8 +267,6 @@ SRC += \
 TESTSRC = \
   $(TOP)/ext/expert/sqlite3expert.c \
   $(TOP)/ext/expert/test_expert.c \
-  $(TOP)/ext/fts3/fts3_term.c \
-  $(TOP)/ext/fts3/fts3_test.c \
   $(TOP)/ext/rbu/test_rbu.c \
   $(TOP)/src/test1.c \
   $(TOP)/src/test2.c \
@@ -377,8 +353,6 @@ TESTSRC += \
   $(TOP)/ext/recover/test_recover.c
 
 
-#TESTSRC += $(TOP)/ext/fts3/fts3_tokenizer.c
-
 TESTSRC2 = \
   $(TOP)/src/attach.c \
   $(TOP)/src/backup.c \
@@ -420,11 +394,6 @@ TESTSRC2 = \
   $(TOP)/src/wherecode.c \
   $(TOP)/src/whereexpr.c \
   parse.c \
-  $(TOP)/ext/fts3/fts3.c \
-  $(TOP)/ext/fts3/fts3_aux.c \
-  $(TOP)/ext/fts3/fts3_expr.c \
-  $(TOP)/ext/fts3/fts3_tokenizer.c \
-  $(TOP)/ext/fts3/fts3_write.c \
   $(TOP)/ext/async/sqlite3async.c \
   $(TOP)/ext/misc/stmt.c \
   $(TOP)/ext/session/sqlite3session.c \
@@ -461,11 +430,6 @@ HDR = \
 
 # Header files used by extensions
 #
-EXTHDR += \
-  $(TOP)/ext/fts3/fts3.h \
-  $(TOP)/ext/fts3/fts3Int.h \
-  $(TOP)/ext/fts3/fts3_hash.h \
-  $(TOP)/ext/fts3/fts3_tokenizer.h
 EXTHDR += \
   $(TOP)/ext/rtree/rtree.h \
   $(TOP)/ext/rtree/geopoly.c
@@ -507,7 +471,7 @@ TESTOPTS = --verbose=file --output=test-out.txt
 
 # Extra compiler options for various shell tools
 #
-SHELL_OPT += -DSQLITE_ENABLE_FTS4 -DSQLITE_ENABLE_FTS5
+SHELL_OPT += -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS5
 SHELL_OPT += -DSQLITE_ENABLE_RTREE
 SHELL_OPT += -DSQLITE_ENABLE_EXPLAIN_COMMENTS
 SHELL_OPT += -DSQLITE_ENABLE_UNKNOWN_SQL_FUNCTION
@@ -521,7 +485,7 @@ FUZZCHECK_OPT += -I$(TOP)/ext/recover
 FUZZCHECK_OPT += -DSQLITE_ENABLE_MEMSYS5
 FUZZCHECK_OPT += -DSQLITE_MAX_MEMORY=50000000
 FUZZCHECK_OPT += -DSQLITE_PRINTF_PRECISION_LIMIT=1000
-FUZZCHECK_OPT += -DSQLITE_ENABLE_FTS4
+FUZZCHECK_OPT += -DSQLITE_ENABLE_DESERIALIZE
 FUZZCHECK_OPT += -DSQLITE_ENABLE_RTREE
 FUZZCHECK_OPT += -DSQLITE_ENABLE_GEOPOLY
 FUZZCHECK_OPT += -DSQLITE_ENABLE_DBSTAT_VTAB
@@ -583,7 +547,6 @@ DBFUZZ2_OPTS = \
   -DSQLITE_ENABLE_DBSTAT_VTAB \
   -DSQLITE_ENABLE_BYTECODE_VTAB \
   -DSQLITE_ENABLE_RTREE \
-  -DSQLITE_ENABLE_FTS4 \
   -DSQLITE_ENABLE_FTS5
 
 dbfuzz2$(EXE):	$(TOP)/test/dbfuzz2.c sqlite3.c sqlite3.h
@@ -754,45 +717,6 @@ shell.c:	$(SHELL_SRC) $(TOP)/tool/mkshellc.tcl
 #
 icu.o:	$(TOP)/ext/icu/icu.c $(HDR) $(EXTHDR)
 	$(TCCX) -DSQLITE_CORE -c $(TOP)/ext/icu/icu.c
-
-fts3.o:	$(TOP)/ext/fts3/fts3.c $(HDR) $(EXTHDR)
-	$(TCCX) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3.c
-
-fts3_aux.o:	$(TOP)/ext/fts3/fts3_aux.c $(HDR) $(EXTHDR)
-	$(TCCX) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_aux.c
-
-fts3_expr.o:	$(TOP)/ext/fts3/fts3_expr.c $(HDR) $(EXTHDR)
-	$(TCCX) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_expr.c
-
-fts3_hash.o:	$(TOP)/ext/fts3/fts3_hash.c $(HDR) $(EXTHDR)
-	$(TCCX) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_hash.c
-
-fts3_icu.o:	$(TOP)/ext/fts3/fts3_icu.c $(HDR) $(EXTHDR)
-	$(TCCX) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_icu.c
-
-fts3_snippet.o:	$(TOP)/ext/fts3/fts3_snippet.c $(HDR) $(EXTHDR)
-	$(TCCX) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_snippet.c
-
-fts3_porter.o:	$(TOP)/ext/fts3/fts3_porter.c $(HDR) $(EXTHDR)
-	$(TCCX) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_porter.c
-
-fts3_tokenizer.o:	$(TOP)/ext/fts3/fts3_tokenizer.c $(HDR) $(EXTHDR)
-	$(TCCX) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_tokenizer.c
-
-fts3_tokenizer1.o:	$(TOP)/ext/fts3/fts3_tokenizer1.c $(HDR) $(EXTHDR)
-	$(TCCX) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_tokenizer1.c
-
-fts3_tokenize_vtab.o:	$(TOP)/ext/fts3/fts3_tokenize_vtab.c $(HDR) $(EXTHDR)
-	$(TCCX) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_tokenize_vtab.c
-
-fts3_unicode.o:	$(TOP)/ext/fts3/fts3_unicode.c $(HDR) $(EXTHDR)
-	$(TCCX) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_unicode.c
-
-fts3_unicode2.o:	$(TOP)/ext/fts3/fts3_unicode2.c $(HDR) $(EXTHDR)
-	$(TCCX) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_unicode2.c
-
-fts3_write.o:	$(TOP)/ext/fts3/fts3_write.c $(HDR) $(EXTHDR)
-	$(TCCX) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_write.c
 
 fts5.o:	fts5.c  sqlite3ext.h sqlite3.h
 	$(TCCX) -DSQLITE_CORE -c fts5.c
@@ -1019,10 +943,6 @@ changesetfuzz$(EXE):	$(TOP)/ext/session/changesetfuzz.c sqlite3.o
 	$(TCC) -DSQLITE_THREADSAFE=0 -DSQLITE_OMIT_LOAD_EXTENSION -o changesetfuzz$(EXE) \
 		$(TOP)/ext/session/changesetfuzz.c sqlite3.o $(THREADLIB)
 
-fts3view$(EXE):	$(TOP)/ext/fts3/tool/fts3view.c sqlite3.o
-	$(TCC) -DSQLITE_THREADSAFE=0 -DSQLITE_OMIT_LOAD_EXTENSION -o fts3view$(EXE) \
-		$(TOP)/ext/fts3/tool/fts3view.c sqlite3.o $(THREADLIB)
-
 rollback-test$(EXE):	$(TOP)/tool/rollback-test.c sqlite3.o
 	$(TCC) -DSQLITE_THREADSAFE=0 -DSQLITE_OMIT_LOAD_EXTENSION -o rollback-test$(EXE) \
 		$(TOP)/tool/rollback-test.c sqlite3.o $(THREADLIB)
@@ -1088,11 +1008,9 @@ clean:
 	rm -rf tsrc target_source
 	rm -f testloadext.dll libtestloadext.so
 	rm -f amalgamation-testfixture amalgamation-testfixture.exe
-	rm -f fts3-testfixture fts3-testfixture.exe
 	rm -f testfixture testfixture.exe
 	rm -f threadtest3 threadtest3.exe
 	rm -f LogEst LogEst.exe
-	rm -f fts3view fts3view.exe
 	rm -f rollback-test rollback-test.exe
 	rm -f showdb showdb.exe
 	rm -f showjournal showjournal.exe

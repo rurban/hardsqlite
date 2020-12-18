@@ -31,7 +31,7 @@ BCC = @BUILD_CC@ @BUILD_CFLAGS@
 CC = @CC@
 CFLAGS = @CPPFLAGS@ @CFLAGS@
 TCC = ${CC} ${CFLAGS} -I. -I${TOP}/src -I${TOP}/ext/rtree -I${TOP}/ext/icu
-TCC += -I${TOP}/ext/fts3 -I${TOP}/ext/async -I${TOP}/ext/session
+TCC += -I${TOP}/ext/async -I${TOP}/ext/session
 TCC += -I${TOP}/ext/userauth
 
 # Define this for the autoconf-based build, so that the code knows it can
@@ -174,11 +174,7 @@ LIBOBJS0 = alter.lo analyze.lo attach.lo auth.lo \
          callback.lo complete.lo ctime.lo \
          date.lo dbpage.lo dbstat.lo delete.lo \
          expr.lo fault.lo fkey.lo \
-         fts3.lo fts3_aux.lo fts3_expr.lo fts3_hash.lo fts3_icu.lo \
-         fts3_porter.lo fts3_snippet.lo fts3_tokenizer.lo fts3_tokenizer1.lo \
-         fts3_tokenize_vtab.lo \
-         fts3_unicode.lo fts3_unicode2.lo fts3_write.lo \
-	 fts5.lo \
+         fts5.lo \
          func.lo global.lo hash.lo \
          icu.lo insert.lo json.lo legacy.lo loadext.lo \
          main.lo malloc.lo mem0.lo mem1.lo mem2.lo mem3.lo mem5.lo \
@@ -411,8 +407,6 @@ TESTSRC = \
   $(TOP)/src/test_windirent.c \
   $(TOP)/src/test_window.c \
   $(TOP)/src/test_wsd.c       \
-  $(TOP)/ext/fts3/fts3_term.c \
-  $(TOP)/ext/fts3/fts3_test.c  \
   $(TOP)/ext/session/test_session.c \
   $(TOP)/ext/recover/sqlite3recover.c \
   $(TOP)/ext/recover/dbdata.c \
@@ -503,12 +497,6 @@ TESTSRC2 = \
   $(TOP)/src/whereexpr.c \
   $(TOP)/src/window.c \
   parse.c \
-  $(TOP)/ext/fts3/fts3.c \
-  $(TOP)/ext/fts3/fts3_aux.c \
-  $(TOP)/ext/fts3/fts3_expr.c \
-  $(TOP)/ext/fts3/fts3_term.c \
-  $(TOP)/ext/fts3/fts3_tokenizer.c \
-  $(TOP)/ext/fts3/fts3_write.c \
   $(TOP)/ext/async/sqlite3async.c \
   $(TOP)/ext/session/sqlite3session.c \
   $(TOP)/ext/misc/stmt.c \
@@ -589,8 +577,9 @@ TESTOPTS = --verbose=file --output=test-out.txt
 # Extra compiler options for various shell tools
 #
 SHELL_OPT += -DSQLITE_DQS=0
-SHELL_OPT += -DSQLITE_ENABLE_FTS4
-#SHELL_OPT += -DSQLITE_ENABLE_FTS5
+SHELL_OPT = -DSQLITE_ENABLE_JSON1
+#SHELL_OPT += -DSQLITE_ENABLE_FTS4
+SHELL_OPT += -DSQLITE_ENABLE_FTS5
 SHELL_OPT += -DSQLITE_ENABLE_RTREE
 SHELL_OPT += -DSQLITE_ENABLE_EXPLAIN_COMMENTS
 SHELL_OPT += -DSQLITE_ENABLE_UNKNOWN_SQL_FUNCTION
@@ -611,8 +600,6 @@ FUZZCHECK_OPT += \
   -DSQLITE_ENABLE_DESERIALIZE \
   -DSQLITE_ENABLE_EXPLAIN_COMMENTS \
   -DSQLITE_ENABLE_FTS3_PARENTHESIS \
-  -DSQLITE_ENABLE_FTS4 \
-  -DSQLITE_ENABLE_FTS5 \
   -DSQLITE_ENABLE_GEOPOLY \
   -DSQLITE_ENABLE_MATH_FUNCTIONS \
   -DSQLITE_ENABLE_MEMSYS5 \
@@ -717,7 +704,6 @@ DBFUZZ2_OPTS = \
   -DSQLITE_ENABLE_DBSTAT_VTAB \
   -DSQLITE_ENABLE_BYTECODE_VTAB \
   -DSQLITE_ENABLE_RTREE \
-  -DSQLITE_ENABLE_FTS4 \
   -DSQLITE_ENABLE_FTS5
 
 dbfuzz2$(TEXE):	$(TOP)/test/dbfuzz2.c sqlite3.c sqlite3.h
@@ -1149,45 +1135,6 @@ shell.c:	$(SHELL_SRC) $(TOP)/tool/mkshellc.tcl
 icu.lo:	$(TOP)/ext/icu/icu.c $(HDR) $(EXTHDR)
 	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/icu/icu.c
 
-fts3.lo:	$(TOP)/ext/fts3/fts3.c $(HDR) $(EXTHDR)
-	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3.c
-
-fts3_aux.lo:	$(TOP)/ext/fts3/fts3_aux.c $(HDR) $(EXTHDR)
-	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_aux.c
-
-fts3_expr.lo:	$(TOP)/ext/fts3/fts3_expr.c $(HDR) $(EXTHDR)
-	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_expr.c
-
-fts3_hash.lo:	$(TOP)/ext/fts3/fts3_hash.c $(HDR) $(EXTHDR)
-	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_hash.c
-
-fts3_icu.lo:	$(TOP)/ext/fts3/fts3_icu.c $(HDR) $(EXTHDR)
-	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_icu.c
-
-fts3_porter.lo:	$(TOP)/ext/fts3/fts3_porter.c $(HDR) $(EXTHDR)
-	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_porter.c
-
-fts3_snippet.lo:	$(TOP)/ext/fts3/fts3_snippet.c $(HDR) $(EXTHDR)
-	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_snippet.c
-
-fts3_tokenizer.lo:	$(TOP)/ext/fts3/fts3_tokenizer.c $(HDR) $(EXTHDR)
-	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_tokenizer.c
-
-fts3_tokenizer1.lo:	$(TOP)/ext/fts3/fts3_tokenizer1.c $(HDR) $(EXTHDR)
-	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_tokenizer1.c
-
-fts3_tokenize_vtab.lo:	$(TOP)/ext/fts3/fts3_tokenize_vtab.c $(HDR) $(EXTHDR)
-	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_tokenize_vtab.c
-
-fts3_unicode.lo:	$(TOP)/ext/fts3/fts3_unicode.c $(HDR) $(EXTHDR)
-	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_unicode.c
-
-fts3_unicode2.lo:	$(TOP)/ext/fts3/fts3_unicode2.c $(HDR) $(EXTHDR)
-	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_unicode2.c
-
-fts3_write.lo:	$(TOP)/ext/fts3/fts3_write.c $(HDR) $(EXTHDR)
-	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/fts3/fts3_write.c
-
 rtree.lo:	$(TOP)/ext/rtree/rtree.c $(HDR) $(EXTHDR)
 	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/rtree/rtree.c
 
@@ -1503,7 +1450,7 @@ clean:
 	rm -rf tsrc .target_source
 	rm -f tclsqlite3$(TEXE)
 	rm -f testfixture$(TEXE) test.db
-	rm -f LogEst$(TEXE) fts3view$(TEXE) rollback-test$(TEXE) showdb$(TEXE)
+	rm -f LogEst$(TEXE) rollback-test$(TEXE) showdb$(TEXE)
 	rm -f showjournal$(TEXE) showstat4$(TEXE) showwal$(TEXE) speedtest1$(TEXE)
 	rm -f wordcount$(TEXE) changeset$(TEXE)
 	rm -f sqlite3.dll sqlite3.lib sqlite3.exp sqlite3.def

@@ -16,9 +16,6 @@
 */
 #include "sqliteInt.h"
 
-#ifdef SQLITE_ENABLE_FTS3
-# include "fts3.h"
-#endif
 #ifdef SQLITE_ENABLE_RTREE
 # include "rtree.h"
 #endif
@@ -64,9 +61,6 @@ static int (*const sqlite3BuiltinExtensions[])(sqlite3*) = {
 #endif
 #ifdef SQLITE_ENABLE_FTS2
   sqlite3Fts2Init,
-#endif
-#ifdef SQLITE_ENABLE_FTS3
-  sqlite3Fts3Init,
 #endif
 #ifdef SQLITE_ENABLE_FTS5
   sqlite3Fts5Init,
@@ -956,7 +950,6 @@ int sqlite3_db_config(sqlite3 *db, int op, ...){
         { SQLITE_DBCONFIG_ENABLE_FKEY,           SQLITE_ForeignKeys    },
         { SQLITE_DBCONFIG_ENABLE_TRIGGER,        SQLITE_EnableTrigger  },
         { SQLITE_DBCONFIG_ENABLE_VIEW,           SQLITE_EnableView     },
-        { SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER, SQLITE_Fts3Tokenizer  },
         { SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION, SQLITE_LoadExtension  },
         { SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE,      SQLITE_NoCkptOnClose  },
         { SQLITE_DBCONFIG_ENABLE_QPSG,           SQLITE_EnableQPSG     },
@@ -3353,9 +3346,6 @@ static int openDatabase(
 #endif
 #if defined(SQLITE_ENABLE_OVERSIZE_CELL_CHECK)
                  | SQLITE_CellSizeCk
-#endif
-#if defined(SQLITE_ENABLE_FTS3_TOKENIZER)
-                 | SQLITE_Fts3Tokenizer
 #endif
 #if defined(SQLITE_ENABLE_QPSG)
                  | SQLITE_EnableQPSG

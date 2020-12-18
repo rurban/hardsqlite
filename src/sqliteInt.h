@@ -1776,7 +1776,7 @@ struct sqlite3 {
 #define SQLITE_DeferFKs       0x00080000  /* Defer all FK constraints */
 #define SQLITE_QueryOnly      0x00100000  /* Disable database changes */
 #define SQLITE_CellSizeCk     0x00200000  /* Check btree cell sizes on load */
-#define SQLITE_Fts3Tokenizer  0x00400000  /* Enable fts3_tokenizer(2) */
+//#define SQLITE_Fts3Tokenizer  0x00400000  /* Enable fts3_tokenizer(2) */
 #define SQLITE_EnableQPSG     0x00800000  /* Query Planner Stability Guarantee*/
 #define SQLITE_TriggerEQP     0x01000000  /* Show trigger EXPLAIN QUERY PLAN */
 #define SQLITE_ResetDatabase  0x02000000  /* Reset the database */
@@ -4418,28 +4418,9 @@ int sqlite3CantopenError(int);
 #endif
 
 /*
-** FTS3 and FTS4 both require virtual table support
+** The ctype.h header is needed for non-ASCII systems.
 */
-#if defined(SQLITE_OMIT_VIRTUALTABLE)
-# undef SQLITE_ENABLE_FTS3
-# undef SQLITE_ENABLE_FTS4
-#endif
-
-/*
-** FTS4 is really an extension for FTS3.  It is enabled using the
-** SQLITE_ENABLE_FTS3 macro.  But to avoid confusion we also call
-** the SQLITE_ENABLE_FTS4 macro to serve as an alias for SQLITE_ENABLE_FTS3.
-*/
-#if defined(SQLITE_ENABLE_FTS4) && !defined(SQLITE_ENABLE_FTS3)
-# define SQLITE_ENABLE_FTS3 1
-#endif
-
-/*
-** The ctype.h header is needed for non-ASCII systems.  It is also
-** needed by FTS3 when FTS3 is included in the amalgamation.
-*/
-#if !defined(SQLITE_ASCII) || \
-    (defined(SQLITE_ENABLE_FTS3) && defined(SQLITE_AMALGAMATION))
+#if !defined(SQLITE_ASCII)
 # include <ctype.h>
 #endif
 
