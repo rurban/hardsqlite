@@ -3853,8 +3853,10 @@ static int renumberCursorsCb(Walker *pWalker, Expr *pExpr){
   if( op==TK_COLUMN || op==TK_IF_NULL_ROW ){
     renumberCursorDoMapping(pWalker, &pExpr->iTable);
   }
-  if( ExprHasProperty(pExpr, EP_FromJoin) ){
-    renumberCursorDoMapping(pWalker, &pExpr->w.iRightJoinTable);
+  if( ExprHasProperty(pExpr, EP_FromJoin)
+   && ALWAYS(aCsrMap[pExpr->iRightJoinTable])
+  ){
+    pExpr->iRightJoinTable = aCsrMap[pExpr->iRightJoinTable];
   }
   return WRC_Continue;
 }
